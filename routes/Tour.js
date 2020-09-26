@@ -90,11 +90,7 @@ const deleteTour = (req, res) => {
     });
 };
 
-router.route('/api/v1/tours').get(getAllTours).post(createTour);
-router
-    .route('/api/v1/tours/:id')
-    .get(getTour)
-    .patch(updateTour)
-    .delete(deleteTour);
+router.route('/').get(getAllTours).post(createTour);
+router.route('/:id').get(getTour).patch(updateTour).delete(deleteTour);
 
 module.exports = router;

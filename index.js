@@ -19,8 +19,8 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use(authRoutes);
-app.use(tourRoutes);
+app.use('/api/v1/users', authRoutes);
+app.use('/api/v1/tours', tourRoutes);
 
 app.listen(appPort, () => {
     console.log(`[Server] Listening on port ${appPort}`);
