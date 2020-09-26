@@ -1,27 +1,22 @@
-const express = require('express');
-const morgan = require('morgan');
-const authRoutes = require('./routes/Auth');
-const tourRoutes = require('./routes/Tour');
+const mongoose = require('mongoose');
+require('dotenv').config({ path: './config.env' });
 
-const app = express();
-const appPort = process.env.PORT || 3000;
+const app = require('./app');
+const port = process.env.PORT || 3000;
 
-app.use(morgan('dev'));
-app.use(express.json());
-
-app.use((req, res, next) => {
-    console.log('Hello from the middleware');
-    next();
+mongoose.connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useFindAndModify: true,
+    useCreateIndex: true,
 });
-
-app.use((req, res, next) => {
-    req.requestTime = new Date().toISOString();
-    next();
+const db = mongoose.connection;
+db.on('connected', () => {
+    console.log('[Mongoose] Connected to DB.');
+    app.listen(port, () => {
+        console.log(`[Server] Listening on port ${port}`);
+    });
 });
-
-app.use('/api/v1/users', authRoutes);
-app.use('/api/v1/tours', tourRoutes);
-
-app.listen(appPort, () => {
-    console.log(`[Server] Listening on port ${appPort}`);
+db.on('error', err => {
+    throw new Error(`[Mongoose] Connection error: ${err.message}`);
 });
