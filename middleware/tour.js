@@ -1,14 +1,10 @@
-const tours = require('../dev-data/data/tours-simple.json');
-
-const isValidTour = (req, res, next) => {
-    const { name, price } = req.body;
-    if (!name || !price) {
-        return res.status(400).json({
-            status: 'fail',
-            message: 'Invalid tour specified.  Please include a name property.',
-        });
-    }
+const aliasTopTours = (req, res, next) => {
+    req.query = {
+        limit: 5,
+        sort: '-ratingAverage,price',
+        fields: 'name,price,ratingAverage,summary,difficulty',
+    };
     next();
 };
 
-module.exports = { isValidTour };
+module.exports = { aliasTopTours };
