@@ -4,9 +4,10 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "start": "nodemon",
-        "start:prod": "NODE_ENV=production nodemon",
-        "start:db": "mongod --dbpath=../data"
+        "start": "cross-env NODE_ENV=development nodemon",
+        "start:prod": "cross-env NODE_ENV=production nodemon",
+        "start:db": "mongod --dbpath=../data",
+        "debug": "ndb index.js"
     },
     "keywords": [],
     "author": "",

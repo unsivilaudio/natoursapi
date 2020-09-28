@@ -1,6 +1,8 @@
 const express = require('express');
 const morgan = require('morgan');
 
+const AppError = require('./utils/appError');
+const globalErrorHandler = require('./controllers/errorController');
 const userRoutes = require('./routes/Users');
 const tourRoutes = require('./routes/Tour');
 
@@ -23,5 +25,11 @@ app.use('/api/v1/tours', tourRoutes);
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/public/overview.html');
 });
+
+app.all('*', (req, res, next) => {
+    next(new AppError(`Can't find ${req.originalUrl} on this server!`, 400));
+});
+
+app.use(globalErrorHandler);
 
 module.exports = app;
