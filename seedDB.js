@@ -1,5 +1,5 @@
 const Tour = require('./models/tour');
-const tours = require('./dev-data/data/tours-simple.json');
+const tours = require('./dev-data/data/tours.json');
 
 const seedTours = async () => {
     await Tour.find().deleteMany();

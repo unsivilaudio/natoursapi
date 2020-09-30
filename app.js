@@ -8,6 +8,7 @@ const hpp = require('hpp');
 
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
+const reviewRoutes = require('./routes/Review');
 const userRoutes = require('./routes/User');
 const tourRoutes = require('./routes/Tour');
 
@@ -47,6 +48,7 @@ app.use((req, res, next) => {
     next();
 });
 
+app.use('/api/v1/reviews', reviewRoutes);
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/tours', tourRoutes);
 
