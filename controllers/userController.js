@@ -1,5 +1,16 @@
 const User = require('../models/user');
+const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
+
+const filterObj = (obj, ...allowedFields) => {
+    const newObj = {};
+    Object.keys(obj).forEach(el => {
+        if (allowedFields.includes(el)) {
+            newObj[el] = obj[el];
+        }
+    });
+    return newObj;
+};
 
 const getAllUsers = catchAsync(async (req, res, next) => {
     const users = await User.find();
@@ -10,6 +21,36 @@ const getAllUsers = catchAsync(async (req, res, next) => {
         data: {
             users,
         },
+    });
+});
+
+const updateMe = catchAsync(async (req, res, next) => {
+    if (req.body.password || req.body.passwordConfirm) {
+        throw new AppError(
+            'This route is not for password updates.  Please use /updatePassword',
+            400
+        );
+    }
+    const filterBody = filterObj(req.body, 'name', 'email');
+    const updatedUser = await User.findByIdAndUpdate(req.user.id, filterBody, {
+        new: true,
+        runValidators: true,
+    });
+
+    res.status(200).json({
+        status: 'success',
+        data: {
+            user: updatedUser,
+        },
+    });
+});
+
+const deleteMe = catchAsync(async (req, res, next) => {
+    await User.findByIdAndUpdate(req.user.id, { active: false });
+
+    res.status(204).json({
+        status: 'success',
+        data: null,
     });
 });
 
@@ -41,4 +82,12 @@ const deleteUser = (req, res) => {
     });
 };
 
-module.exports = { getAllUsers, getUser, createUser, updateUser, deleteUser };
+module.exports = {
+    getAllUsers,
+    getUser,
+    createUser,
+    updateUser,
+    deleteUser,
+    updateMe,
+    deleteMe,
+};
