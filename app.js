@@ -48,9 +48,9 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use('/api/v1/reviews', reviewRoutes);
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/tours', tourRoutes);
+app.use('/api/v1/reviews', reviewRoutes);
 
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/public/overview.html');
