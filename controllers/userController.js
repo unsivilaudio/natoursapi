@@ -25,6 +25,11 @@ const getAllUsers = catchAsync(async (req, res, next) => {
     });
 });
 
+const getMe = (req, res, next) => {
+    req.params.id = req.user.id;
+    next();
+};
+
 const updateMe = catchAsync(async (req, res, next) => {
     if (req.body.password || req.body.passwordConfirm) {
         throw new AppError(
@@ -55,17 +60,12 @@ const deleteMe = catchAsync(async (req, res, next) => {
     });
 });
 
-const getUser = (req, res) => {
-    res.status(500).json({
-        status: 'error',
-        message: 'This route is not yet defined.',
-    });
-};
+const getUser = factory.getOne(User);
 
 const createUser = (req, res) => {
     res.status(500).json({
         status: 'error',
-        message: 'This route is not yet defined.',
+        message: 'This route is not defined! Please use /signup instead.',
     });
 };
 
@@ -78,6 +78,7 @@ module.exports = {
     createUser,
     updateUser,
     deleteUser,
+    getMe,
     updateMe,
     deleteMe,
 };
