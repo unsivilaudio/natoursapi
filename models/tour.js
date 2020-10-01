@@ -118,6 +118,7 @@ tourSchema.virtual('reviews', {
 });
 
 // tourSchema.index({ price: 1 });
+tourSchema.index({ startLocation: '2dsphere' });
 tourSchema.index({ price: 1, ratingsAverage: -1 });
 tourSchema.index({ slug: 1 });
 
