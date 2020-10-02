@@ -22,7 +22,7 @@ db.on('connected', () => {
     server = app.listen(port, () => {
         console.log(`[Server] Listening on port ${port}`);
     });
-    // require('./seedDB').seedUsers();
+    // require('./seedDB').seedTours();
 });
 db.on('error', err => {
     throw new Error(`[Mongoose] Connection error: ${err.message}`);
