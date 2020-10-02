@@ -6,6 +6,7 @@ const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
+const csp = require('express-csp');
 
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
@@ -21,6 +22,62 @@ app.set('views', path.join(__dirname, '/views'));
 app.use(express.static(path.join(__dirname, '/public')));
 
 app.use(helmet());
+
+csp.extend(app, {
+    policy: {
+        directives: {
+            'default-src': ['self'],
+            'style-src': [
+                'self',
+                'unsafe-inline',
+                'https://fonts.googleapis.com',
+                'https://api.mapbox.com',
+            ],
+            'font-src': ['self', 'https://fonts.gstatic.com'],
+            'script-src': [
+                'self',
+                'unsafe-inline',
+                'data',
+                'blob',
+                'https://js.stripe.com',
+                'https://api.mapbox.com',
+            ],
+            'worker-src': [
+                'self',
+                'unsafe-inline',
+                'data:',
+                'blob:',
+                'https://js.stripe.com',
+                'https://api.mapbox.com',
+            ],
+            'frame-src': [
+                'self',
+                'unsafe-inline',
+                'data:',
+                'blob:',
+                'https://js.stripe.com',
+                'https://api.mapbox.com',
+            ],
+            'img-src': [
+                'self',
+                'unsafe-inline',
+                'data:',
+                'blob:',
+                'https://js.stripe.com',
+                'https://api.mapbox.com',
+            ],
+            'connect-src': [
+                'self',
+                'unsafe-inline',
+                'data:',
+                'blob:',
+                'https://api.mapbox.com',
+                'https://events.mapbox.com',
+            ],
+        },
+    },
+});
+
 if (process.env.NODE_ENV === 'development') {
     app.use(morgan('dev'));
 }
