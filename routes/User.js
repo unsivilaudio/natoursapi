@@ -18,10 +18,12 @@ const {
     protect,
     updatePassword,
     restrictTo,
+    logout,
 } = require('../controllers/authController');
 
 router.post('/signup', signup);
 router.post('/login', login);
+router.get('/logout', logout);
 router.post('/forgotpassword', forgotPassword);
 router.patch('/resetpassword/:token', resetPassword);
 

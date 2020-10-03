@@ -1,4 +1,5 @@
 const Tour = require('../models/tour');
+const User = require('../models/user');
 const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
 
@@ -17,7 +18,7 @@ const getTour = catchAsync(async (req, res, next) => {
         path: 'reviews',
         fields: 'review rating user',
     });
-    if (!tour) throw new AppError('Tour not found!', 404);
+    if (!tour) return next(new AppError('Tour not found!', 404));
     res.status(200).render('tour', {
         title: tour.name,
         tour,
@@ -28,4 +29,29 @@ const getLogin = (req, res) => {
     res.status(200).render('login');
 };
 
-module.exports = { getOverview, getTour, getLogin };
+const getAccount = (req, res) => {
+    res.status(200).render('account', {
+        title: 'Your account',
+    });
+};
+
+const updateUserData = catchAsync(async (req, res, next) => {
+    const updatedUser = await User.findByIdAndUpdate(
+        req.user._id,
+        {
+            name: req.body.name,
+            email: req.body.email,
+        },
+        {
+            new: true,
+            runValidators: true,
+        }
+    );
+
+    res.status(200).render('account', {
+        title: 'Your account',
+        user: updatedUser,
+    });
+});
+
+module.exports = { getOverview, getTour, getLogin, getAccount, updateUserData };

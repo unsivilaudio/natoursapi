@@ -46,7 +46,6 @@ const signup = catchAsync(async (req, res, next) => {
 });
 
 const login = catchAsync(async (req, res, next) => {
-    console.log(req.body);
     const { email, password } = req.body;
 
     if (!email || !password) {
@@ -62,8 +61,17 @@ const login = catchAsync(async (req, res, next) => {
     createSendToken(user, 200, res);
 });
 
+const logout = (req, res) => {
+    res.cookie('jwt', 'loggedOut', {
+        expires: new Date(Date.now() + 10 * 1000),
+        httpOnly: true,
+    });
+
+    res.status(200).json({ status: 'success' });
+};
+
 const isLoggedIn = catchAsync(async (req, res, next) => {
-    if (req.cookies.jwt) {
+    if (req.cookies.jwt && req.cookies.jwt !== 'loggedOut') {
         const decoded = await promisify(jwt.verify)(
             req.cookies.jwt,
             process.env.JWT_SECRET
@@ -90,7 +98,7 @@ const protect = catchAsync(async (req, res, next) => {
         req.headers.authorization.startsWith('Bearer')
     ) {
         token = req.headers.authorization.split(' ')[1];
-    } else if (req.cookies.jwt) {
+    } else if (req.cookies.jwt && req.cookies.jwt !== 'loggedOut') {
         token = req.cookies.jwt;
     }
     if (!token) {
@@ -117,6 +125,7 @@ const protect = catchAsync(async (req, res, next) => {
     }
 
     req.user = user;
+    res.locals.user = user;
     next();
 });
 
@@ -216,4 +225,5 @@ module.exports = {
     resetPassword,
     updatePassword,
     isLoggedIn,
+    logout,
 };
