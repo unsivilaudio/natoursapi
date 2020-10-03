@@ -18,11 +18,14 @@ const getTour = catchAsync(async (req, res, next) => {
         fields: 'review rating user',
     });
     if (!tour) throw new AppError('Tour not found!', 404);
-    console.log(tour);
     res.status(200).render('tour', {
         title: tour.name,
         tour,
     });
 });
 
-module.exports = { getOverview, getTour };
+const getLogin = (req, res) => {
+    res.status(200).render('login');
+};
+
+module.exports = { getOverview, getTour, getLogin };
