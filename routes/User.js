@@ -1,4 +1,5 @@
 const express = require('express');
+
 const router = express.Router({ mergeParams: true });
 const {
     getAllUsers,
@@ -9,6 +10,7 @@ const {
     updateMe,
     deleteMe,
     getMe,
+    uploadUserPhoto,
 } = require('../controllers/userController');
 const {
     signup,
@@ -31,7 +33,7 @@ router.patch('/resetpassword/:token', resetPassword);
 router.use(protect);
 router.patch('/updatepassword', updatePassword);
 router.get('/me', getMe, getUser);
-router.patch('/updateme', updateMe);
+router.patch('/updateme', uploadUserPhoto, updateMe);
 router.delete('/deleteme', deleteMe);
 
 // Must be Admin below here
