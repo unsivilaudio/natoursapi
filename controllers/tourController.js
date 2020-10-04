@@ -1,8 +1,9 @@
+const multer = require('multer');
+const sharp = require('sharp');
+
 const Tour = require('../models/tour');
 const AppError = require('../utils/appError');
-
 const catchAsync = require('../utils/catchAsync');
-
 const factory = require('./handlerFactory');
 
 const getAllTours = factory.getAll(Tour);
@@ -10,6 +11,58 @@ const getTour = factory.getOne(Tour, { path: 'reviews' });
 const createTour = factory.createOne(Tour);
 const updateTour = factory.updateOne(Tour);
 const deleteTour = factory.deleteOne(Tour);
+
+const multerStorage = multer.memoryStorage();
+
+const multerFilter = (req, file, callback) => {
+    if (file.mimetype.startsWith('image')) {
+        callback(null, true);
+    } else {
+        callback(
+            new AppError('Not an image. Please upload only images.', 400),
+            false
+        );
+    }
+};
+
+const upload = multer({
+    storage: multerStorage,
+    fileFilter: multerFilter,
+});
+
+const uploadTourImages = upload.fields([
+    { name: 'imageCover', maxCount: 1 },
+    { name: 'images', maxCount: 3 },
+]);
+
+const resizeTourImages = catchAsync(async (req, res, next) => {
+    if (!req.files.imageCover || !req.files.images) return next();
+
+    req.body.imageCover = `tour-${req.params.id}-${Date.now()}-cover.jpeg`;
+    await sharp(req.files.imageCover[0].buffer)
+        .resize(2000, 1333)
+        .toFormat('jpeg')
+        .jpeg({ quality: 90 })
+        .toFile(`public/img/tours/${req.body.imageCover}`);
+
+    req.body.images = await Promise.all(
+        req.files.images.map(async (img, i) => {
+            const filename = `tour-${req.params.id}-${Date.now()}-${
+                i + 1
+            }.jpeg`;
+
+            await sharp(img.buffer)
+                .resize(2000, 1333)
+                .toFormat('jpeg')
+                .jpeg({ quality: 90 })
+                .toFile(`public/img/tours/${filename}`);
+
+            return filename;
+        })
+    );
+
+    next();
+});
 
 const getToursStats = catchAsync(async (req, res, next) => {
     const stats = await Tour.aggregate([
@@ -157,4 +210,6 @@ module.exports = {
     getMonthlyPlan,
     getToursWithin,
     getDistances,
+    resizeTourImages,
+    uploadTourImages,
 };
