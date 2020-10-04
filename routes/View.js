@@ -5,16 +5,20 @@ const {
     getLogin,
     getAccount,
     updateUserData,
+    getMyTours,
 } = require('../controllers/viewController');
 const { isLoggedIn, protect } = require('../controllers/authController');
+const { createBookingCheckout } = require('../controllers/bookingController');
 
 const router = express.Router({ mergeParams: true });
 
-router.get('/me', protect, getAccount);
-router.post('/submit-user-data', protect, updateUserData);
+router.use(protect);
+router.get('/me', getAccount);
+router.get('/my-tours', getMyTours);
+router.post('/submit-user-data', updateUserData);
 
 router.use(isLoggedIn);
-router.get('/', getOverview);
+router.get('/', createBookingCheckout, getOverview);
 router.get('/tour/:slug', getTour);
 router.get('/login', getLogin);
 

@@ -15,6 +15,7 @@ const reviewRoutes = require('./routes/Review');
 const userRoutes = require('./routes/User');
 const tourRoutes = require('./routes/Tour');
 const viewRoutes = require('./routes/View');
+const bookingRoutes = require('./routes/Booking');
 
 const app = express();
 
@@ -41,6 +42,8 @@ csp.extend(app, {
                 'data',
                 'blob',
                 'https://js.stripe.com',
+                'https://m.stripe.com',
+                'https://m.stripe.network',
                 'https://api.mapbox.com',
                 'https://cdnjs.cloudflare.com',
             ],
@@ -118,6 +121,7 @@ app.use('/', viewRoutes);
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/tours', tourRoutes);
 app.use('/api/v1/reviews', reviewRoutes);
+app.use('/api/v1/booking', bookingRoutes);
 
 app.all('*', (req, res, next) => {
     next(new AppError(`Can't find ${req.originalUrl} on this server!`, 400));
