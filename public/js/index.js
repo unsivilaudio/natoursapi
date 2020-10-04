@@ -6,8 +6,8 @@ import { updateSettings } from './updateSettings';
 const mapBox = document.getElementById('map');
 const loginForm = document.querySelector('.form--login');
 const logoutBtn = document.querySelector('.nav__el--logout');
-const updateUserData = document.querySelector('.form-user-data');
-const updateUserSettings = document.querySelector('.form-user-settings');
+const userDataForm = document.querySelector('.form-user-data');
+const userPasswordForm = document.querySelector('.form-user-settings');
 
 if (mapBox) {
     const locations = JSON.parse(mapBox.dataset.locations);
@@ -25,17 +25,19 @@ if (loginForm) {
 
 if (logoutBtn) logoutBtn.addEventListener('click', logout);
 
-if (updateUserData) {
-    updateUserData.addEventListener('submit', e => {
+if (userDataForm) {
+    userDataForm.addEventListener('submit', e => {
         e.preventDefault();
-        const name = document.getElementById('name').value;
-        const email = document.getElementById('email').value;
-        updateSettings({ name, email }, 'data');
+        const form = new FormData();
+        form.append('name', document.getElementById('name').value);
+        form.append('email', document.getElementById('email').value);
+        form.append('photo', document.getElementById('photo').files[0]);
+        updateSettings(form, 'data');
     });
 }
 
-if (updateUserSettings) {
-    updateUserSettings.addEventListener('submit', async e => {
+if (userPasswordForm) {
+    userPasswordForm.addEventListener('submit', async e => {
         e.preventDefault();
         const button = document.querySelector('.btn--save-password');
         button.textContent = 'Updating...';

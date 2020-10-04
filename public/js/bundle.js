@@ -8892,8 +8892,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 var mapBox = document.getElementById('map');
 var loginForm = document.querySelector('.form--login');
 var logoutBtn = document.querySelector('.nav__el--logout');
-var updateUserData = document.querySelector('.form-user-data');
-var updateUserSettings = document.querySelector('.form-user-settings');
+var userDataForm = document.querySelector('.form-user-data');
+var userPasswordForm = document.querySelector('.form-user-settings');
 
 if (mapBox) {
   var locations = JSON.parse(mapBox.dataset.locations);
@@ -8911,20 +8911,19 @@ if (loginForm) {
 
 if (logoutBtn) logoutBtn.addEventListener('click', _login.logout);
 
-if (updateUserData) {
-  updateUserData.addEventListener('submit', function (e) {
+if (userDataForm) {
+  userDataForm.addEventListener('submit', function (e) {
     e.preventDefault();
-    var name = document.getElementById('name').value;
-    var email = document.getElementById('email').value;
-    (0, _updateSettings.updateSettings)({
-      name: name,
-      email: email
-    }, 'data');
+    var form = new FormData();
+    form.append('name', document.getElementById('name').value);
+    form.append('email', document.getElementById('email').value);
+    form.append('photo', document.getElementById('photo').files[0]);
+    (0, _updateSettings.updateSettings)(form, 'data');
   });
 }
 
-if (updateUserSettings) {
-  updateUserSettings.addEventListener('submit', /*#__PURE__*/function () {
+if (userPasswordForm) {
+  userPasswordForm.addEventListener('submit', /*#__PURE__*/function () {
     var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(e) {
       var button, password, updatePassword, updatePasswordConfirm;
       return regeneratorRuntime.wrap(function _callee$(_context) {
@@ -8991,7 +8990,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "54461" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50808" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
