@@ -1,166 +1,37 @@
-const fs = require('fs');
-const express = require('express');
-const morgan = require('morgan');
+const mongoose = require('mongoose');
+require('dotenv').config({ path: './config.env' });
 
-const app = express();
-const appPort = process.env.PORT || 3000;
-
-app.use(morgan('dev'));
-app.use(express.json());
-
-app.use((req, res, next) => {
-    console.log('Hello from the middleware');
-    next();
+process.on('uncaughtException', err => {
+    console.log('UNHANDLED EXCEPTION: Shutting down...');
+    console.log(err.name, err.message);
 });
 
-app.use((req, res, next) => {
-    req.requestTime = new Date().toISOString();
-    next();
+const app = require('./app');
+let server;
+const port = process.env.PORT || 3000;
+
+mongoose.connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useFindAndModify: false,
+    useCreateIndex: true,
+});
+const db = mongoose.connection;
+db.on('connected', () => {
+    console.log('[Mongoose] Connected to DB.');
+    server = app.listen(port, () => {
+        console.log(`[Server] Listening on port ${port}`);
+    });
+    // require('./seedDB').seedTours();
+});
+db.on('error', err => {
+    throw new Error(`[Mongoose] Connection error: ${err.message}`);
 });
 
-const tours = JSON.parse(
-    fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`)
-);
-
-const getAllTours = (req, res) => {
-    // console.log(req.requestTime);
-
-    res.status(200).json({
-        status: 'success',
-        requestedAt: req.requestTime,
-        results: tours.length,
-        data: { tours },
+process.on('unhandledRejection', err => {
+    console.log('UNHANDLED REJECTION: Shutting down...');
+    console.log(err.name, err.message);
+    server.close(() => {
+        process.exit(1);
     });
-};
-
-const getTour = (req, res) => {
-    const id = req.params.id * 1;
-    const foundTour = tours.find(el => el.id === id);
-
-    if (!foundTour) {
-        return res.status(404).json({
-            status: 'fail',
-            message: 'Invalid ID',
-        });
-    }
-
-    res.status(200).json({
-        status: 'success',
-        data: {
-            tour: foundTour,
-        },
-    });
-};
-
-const createTour = (req, res) => {
-    const newId = tours[tours.length - 1].id + 1;
-    const newTour = { id: newId, ...req.body };
-
-    tours.push(newTour);
-
-    fs.writeFile(
-        `${__dirname}/dev-data/data/tours-simple.json`,
-        JSON.stringify(tours),
-        err => {
-            res.status(201).json({
-                status: 'success',
-                data: {
-                    tour: newTour,
-                },
-            });
-        }
-    );
-};
-
-const updateTour = (req, res) => {
-    const id = req.params.id * 1;
-    const foundTour = tours.find(el => el.id === id);
-
-    if (!foundTour) {
-        return res.status(404).json({
-            status: 'fail',
-            message: 'Invalid ID',
-        });
-    }
-
-    res.status(200).json({
-        status: 'success',
-        data: {
-            tour: 'UPDATED TOUR HERE',
-        },
-    });
-};
-
-const deleteTour = (req, res) => {
-    const id = req.params.id * 1;
-    const foundTour = tours.find(el => el.id === id);
-
-    if (!foundTour) {
-        return res.status(404).json({
-            status: 'fail',
-            message: 'Invalid ID',
-        });
-    }
-
-    res.status(204).json({
-        status: 'success',
-        data: null,
-    });
-};
-
-const getAllUsers = (req, res) => {
-    res.status(500).json({
-        status: 'error',
-        message: 'This route is not yet defined.',
-    });
-};
-
-const getUser = (req, res) => {
-    res.status(500).json({
-        status: 'error',
-        message: 'This route is not yet defined.',
-    });
-};
-
-const createUser = (req, res) => {
-    res.status(500).json({
-        status: 'error',
-        message: 'This route is not yet defined.',
-    });
-};
-
-const updateUser = (req, res) => {
-    res.status(500).json({
-        status: 'error',
-        message: 'This route is not yet defined.',
-    });
-};
-
-const deleteUser = (req, res) => {
-    res.status(500).json({
-        status: 'error',
-        message: 'This route is not yet defined.',
-    });
-};
-
-// app.get('/api/v1/tours', getAllTours);
-// app.get('/api/v1/tours/:id', getTour);
-// app.post('/api/v1/tours', createTour);
-// app.patch('/api/v1/tours/:id', updateTour);
-// app.delete('/api/v1/tours/:id', deleteTour);
-
-app.route('/api/v1/tours').get(getAllTours).post(createTour);
-app.route('/api/v1/tours/:id')
-    .get(getTour)
-    .patch(updateTour)
-    .delete(deleteTour);
-
-app.route('/api/v1/users').get(getAllUsers).post(createUser);
-app.route('/api/v1/users/:id')
-    .get(getUser)
-    .patch(updateUser)
-    .delete(deleteUser);
-
-app.listen(appPort, () => {
-    console.log(`[Server] Listening on port ${appPort}`);
 });
