@@ -13,7 +13,30 @@ export const login = async (email, password) => {
                 location.assign('/');
             }, 1500);
         }
-        showAlert('success', 'Sucessfully logged in!');
+        showAlert(
+            'success',
+            `Welcome back ${res.data.data.user.name.split(' ')[0]}!`
+        );
+    } catch (err) {
+        const { message } = err.response.data;
+        showAlert('error', message);
+    }
+};
+
+export const signup = async newUser => {
+    try {
+        const res = await axios.post('/api/v1/users/signup', { ...newUser });
+
+        if (res.data.status === 'success') {
+            window.setTimeout(() => {
+                location.assign('/');
+            }, 1500);
+        }
+
+        showAlert(
+            'success',
+            `Welcome to Natours ${newUser.name.split(' ')[0]}!`
+        );
     } catch (err) {
         const { message } = err.response.data;
         showAlert('error', message);
@@ -26,7 +49,7 @@ export const logout = async () => {
         if (res.data.status === 'success') {
             showAlert('success', 'Successfully logged out!');
             window.setTimeout(() => {
-                location.reload(true);
+                location.assign('/');
             }, 1500);
         }
     } catch (err) {

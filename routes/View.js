@@ -3,6 +3,7 @@ const {
     getOverview,
     getTour,
     getLogin,
+    getSignup,
     getAccount,
     updateUserData,
     getMyTours,
@@ -20,5 +21,6 @@ router.use(isLoggedIn);
 router.get('/', createBookingCheckout, getOverview);
 router.get('/tour/:slug', getTour);
 router.get('/login', getLogin);
+router.get('/signup', getSignup);
 
 module.exports = router;

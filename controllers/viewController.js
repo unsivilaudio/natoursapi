@@ -27,7 +27,15 @@ const getTour = catchAsync(async (req, res, next) => {
 });
 
 const getLogin = (req, res) => {
-    res.status(200).render('login');
+    res.status(200).render('login', {
+        title: 'Log into your account',
+    });
+};
+
+const getSignup = (req, res) => {
+    res.status(200).render('signup', {
+        title: 'Join the Natours family',
+    });
 };
 
 const getAccount = (req, res) => {
@@ -73,6 +81,7 @@ module.exports = {
     getOverview,
     getTour,
     getLogin,
+    getSignup,
     getAccount,
     updateUserData,
     getMyTours,
