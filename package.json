@@ -4,7 +4,7 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "start": "cross-env NODE_ENV=development nodemon",
+        "start": "node index.js",
         "start:prod": "cross-env NODE_ENV=production nodemon",
         "start:db": "mongod --dbpath=../data",
         "debug": "ndb index.js",
