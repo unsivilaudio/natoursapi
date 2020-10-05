@@ -12,10 +12,9 @@ const { createBookingCheckout } = require('../controllers/bookingController');
 
 const router = express.Router({ mergeParams: true });
 
-router.use(protect);
-router.get('/me', getAccount);
-router.get('/my-tours', getMyTours);
-router.post('/submit-user-data', updateUserData);
+router.get('/me', protect, getAccount);
+router.get('/my-tours', protect, getMyTours);
+router.post('/submit-user-data', protect, updateUserData);
 
 router.use(isLoggedIn);
 router.get('/', createBookingCheckout, getOverview);

@@ -16,7 +16,6 @@ const {
 } = require('../controllers/tourController');
 const { protect, restrictTo } = require('../controllers/authController');
 const { aliasTopTours } = require('../middleware/tour');
-const { route } = require('./Review');
 
 router.use('/:tourId/reviews', reviewRouter);
 
