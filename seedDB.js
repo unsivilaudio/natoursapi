@@ -1,3 +1,5 @@
+const mongoose = require('mongoose');
+require('dotenv').config({ path: './config.env' });
 const Tour = require('./models/tour');
 const Review = require('./models/review');
 const User = require('./models/user');
@@ -34,4 +36,20 @@ const seedReviews = async () => {
     });
 };
 
-module.exports = { seedTours, seedUsers, seedReviews };
+mongoose
+    .connect(process.env.MONGO_URI_PROD, {
+        useCreateIndex: true,
+        useUnifiedTopology: true,
+        useNewUrlParser: true,
+        useFindAndModify: false,
+    })
+    .then(() => {
+        seedTours();
+        seedUsers();
+        seedReviews();
+    })
+    .catch(err => {
+        console.log('ERROR', err.message);
+    });
+
+// module.exports = { seedTours, seedUsers, seedReviews };
